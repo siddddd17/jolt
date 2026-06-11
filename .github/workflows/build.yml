@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  # ── Main build + unit tests ──────────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Build and test
+        run: mvn -B package
+
+  # ── Cross-OS reproducibility: resolve on ubuntu ──────────────────────────────
+  resolve-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Build fat JAR
+        run: mvn -B -pl jolt-cli -am package -DskipTests
+      - name: Resolve spring-boot fixture (add lombok)
+        run: >
+          java -jar jolt-cli/target/jolt-cli-0.1.0-SNAPSHOT.jar
+          deps add org.projectlombok:lombok:1.18.32
+          --cwd jolt-it/fixtures/spring-boot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jolt-lock-ubuntu
+          path: jolt-it/fixtures/spring-boot/jolt.lock
+
+  # ── Cross-OS reproducibility: resolve on macos ───────────────────────────────
+  resolve-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Build fat JAR
+        run: mvn -B -pl jolt-cli -am package -DskipTests
+      - name: Resolve spring-boot fixture (add lombok)
+        run: >
+          java -jar jolt-cli/target/jolt-cli-0.1.0-SNAPSHOT.jar
+          deps add org.projectlombok:lombok:1.18.32
+          --cwd jolt-it/fixtures/spring-boot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jolt-lock-macos
+          path: jolt-it/fixtures/spring-boot/jolt.lock
+
+  # ── Diff the two lock files — fail if they differ ────────────────────────────
+  compare-locks:
+    needs: [resolve-ubuntu, resolve-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: jolt-lock-ubuntu
+          path: lock-ubuntu
+      - uses: actions/download-artifact@v4
+        with:
+          name: jolt-lock-macos
+          path: lock-macos
+      - name: Compare lock files (strip generated_at timestamp)
+        run: |
+          sed '/^generated_at/d' lock-ubuntu/jolt.lock > ubuntu-stripped.lock
+          sed '/^generated_at/d' lock-macos/jolt.lock  > macos-stripped.lock
+          if ! diff ubuntu-stripped.lock macos-stripped.lock; then
+            echo "jolt.lock differs between ubuntu-latest and macos-latest"
+            exit 1
+          fi
+          echo "jolt.lock is byte-identical across platforms"

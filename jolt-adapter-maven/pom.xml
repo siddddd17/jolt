@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dev.jolt</groupId>
+    <artifactId>jolt-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>jolt-adapter-maven</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>dev.jolt</groupId>
+      <artifactId>jolt-core</artifactId>
+    </dependency>
+    <!-- Aether resolver core -->
+    <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-connector-basic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-transport-http</artifactId>
+    </dependency>
+    <!-- maven-resolver-provider: bridges Aether to maven-model-builder;
+         provides MavenRepositorySystemUtils, DefaultArtifactDescriptorReader,
+         DefaultVersionResolver, DefaultVersionRangeResolver.
+         NOTE: spec lists maven-resolver-supplier (resolver 2.0); we use
+         maven-resolver-provider (Maven 3.9 family) for package compatibility
+         since maven-model-builder 3.9.x still uses org.eclipse.aether.* packages. -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-resolver-provider</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model-builder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-settings-builder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
