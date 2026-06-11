@@ -1,0 +1,32 @@
+# Maven build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# GraalVM reachability metadata cache (generated at build time)
+jolt-cli/target/graalvm-reachability-metadata/
+
+# Native image binary (platform-specific, built in CI)
+jolt-cli/target/jolt
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Gradle wrapper (fixtures only — the real project uses Maven)
+jolt-it/fixtures/gradle-app/.gradle/
+jolt-it/fixtures/gradle-app/build/
+
+# Jolt's own cache and generated files
+.jolt/
+jolt.lock
+
+# Don't ignore the spec — it's the source of truth
+!jolt-build-spec.md
