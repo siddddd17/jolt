@@ -1,4 +1,3 @@
-# jolt
 
 <p align="center">
   <img src="assets/jolt_banner_v2.svg" alt="Jolt — Opinionated developer tooling for Java" width="100%" />
