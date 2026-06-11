@@ -1,5 +1,9 @@
 # jolt
 
+<p align="center">
+  <img src="assets/jolt_banner_v2.svg" alt="Jolt — Opinionated developer tooling for Java" width="100%" />
+</p>
+
 Opinionated developer tooling for Java. One CLI that replaces your shell aliases for
 `mvn`, `gradle`, `docker`, `git`, and JDK management — with a reproducibility guarantee
 that none of those aliases provide.
